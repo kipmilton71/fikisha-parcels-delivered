@@ -1,6 +1,12 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Package, Truck, Users } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -11,9 +17,11 @@ const Header = () => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center space-x-2">
-            <div className="bg-gradient-hero p-2 rounded-lg">
-              <Package className="h-6 w-6 text-primary-foreground" />
-            </div>
+            <img 
+              src="/lovable-uploads/260af120-2959-4e8f-9da9-f231460da090.png" 
+              alt="Fikisha Logo" 
+              className="h-10 w-10 object-contain"
+            />
             <span className="text-2xl font-bold text-primary">Fikisha</span>
           </div>
 
@@ -38,9 +46,51 @@ const Header = () => {
             <Button variant="ghost" size="sm">
               Sign In
             </Button>
-            <Button variant="hero" size="sm">
-              Get Started
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="hero" size="sm">
+                  Get Started
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-80 p-4">
+                <DropdownMenuItem 
+                  className="flex flex-col items-start p-4 cursor-pointer hover:bg-accent"
+                  onSelect={() => {}}
+                >
+                  <div className="font-semibold text-foreground">Become a Delivery Guy</div>
+                  <div className="text-sm text-muted-foreground mt-1">
+                    Deliver parcels within your area and get paid weekly, good rates.
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="flex flex-col items-start p-4 cursor-pointer hover:bg-accent"
+                  onSelect={() => {}}
+                >
+                  <div className="font-semibold text-foreground">Add Fikisha to your online store</div>
+                  <div className="text-sm text-muted-foreground mt-1">
+                    Reach more customers and increase earnings
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="flex flex-col items-start p-4 cursor-pointer hover:bg-accent"
+                  onSelect={() => {}}
+                >
+                  <div className="font-semibold text-foreground">Sign up as a fleet owner</div>
+                  <div className="text-sm text-muted-foreground mt-1">
+                    Own a fleet? Partner with us and boost your income
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="flex flex-col items-start p-4 cursor-pointer hover:bg-accent"
+                  onSelect={() => {}}
+                >
+                  <div className="font-semibold text-foreground">Fikisha for Bulk sellers</div>
+                  <div className="text-sm text-muted-foreground mt-1">
+                    Scale-up your online business with Fikisha Deliveries
+                  </div>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
           {/* Mobile Menu Button */}
@@ -72,9 +122,51 @@ const Header = () => {
                 <Button variant="ghost" size="sm">
                   Sign In
                 </Button>
-                <Button variant="hero" size="sm">
-                  Get Started
-                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="hero" size="sm" className="w-full">
+                      Get Started
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-80 p-4">
+                    <DropdownMenuItem 
+                      className="flex flex-col items-start p-4 cursor-pointer hover:bg-accent"
+                      onSelect={() => {}}
+                    >
+                      <div className="font-semibold text-foreground">Become a Delivery Guy</div>
+                      <div className="text-sm text-muted-foreground mt-1">
+                        Deliver parcels within your area and get paid weekly, good rates.
+                      </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      className="flex flex-col items-start p-4 cursor-pointer hover:bg-accent"
+                      onSelect={() => {}}
+                    >
+                      <div className="font-semibold text-foreground">Add Fikisha to your online store</div>
+                      <div className="text-sm text-muted-foreground mt-1">
+                        Reach more customers and increase earnings
+                      </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      className="flex flex-col items-start p-4 cursor-pointer hover:bg-accent"
+                      onSelect={() => {}}
+                    >
+                      <div className="font-semibold text-foreground">Sign up as a fleet owner</div>
+                      <div className="text-sm text-muted-foreground mt-1">
+                        Own a fleet? Partner with us and boost your income
+                      </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      className="flex flex-col items-start p-4 cursor-pointer hover:bg-accent"
+                      onSelect={() => {}}
+                    >
+                      <div className="font-semibold text-foreground">Fikisha for Bulk sellers</div>
+                      <div className="text-sm text-muted-foreground mt-1">
+                        Scale-up your online business with Fikisha Deliveries
+                      </div>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </nav>
           </div>
