@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Package, Truck, Clock, Shield } from "lucide-react";
-import heroImage from "@/assets/hero-delivery.jpg";
 
 const Hero = () => {
   return (
@@ -66,14 +65,19 @@ const Hero = () => {
             </div>
           </div>
 
-          {/* Right Image */}
+          {/* Right Video */}
           <div className="relative">
             <div className="relative rounded-2xl overflow-hidden shadow-elegant">
-              <img
-                src={heroImage}
-                alt="Professional courier delivering packages with Fikisha delivery service"
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
                 className="w-full h-[600px] object-cover"
-              />
+              >
+                <source src="/src/assets/hero-delivery-video.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
               <div className="absolute inset-0 bg-gradient-hero opacity-20"></div>
             </div>
             

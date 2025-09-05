@@ -16,13 +16,13 @@ const Header = () => {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
             <img 
               src="/lovable-uploads/260af120-2959-4e8f-9da9-f231460da090.png" 
               alt="Fikisha Logo" 
-              className="h-10 w-10 object-contain"
+              className="h-14 w-14 object-contain"
             />
-            <span className="text-2xl font-bold text-primary">Fikisha</span>
+            <span className="text-3xl font-bold text-primary">Deliveries</span>
           </div>
 
           {/* Desktop Navigation */}
