@@ -68,16 +68,11 @@ const Hero = () => {
           {/* Right Video */}
           <div className="relative">
             <div className="relative rounded-2xl overflow-hidden shadow-elegant">
-              <video
-                autoPlay
-                muted
-                loop
-                playsInline
+              <img
+                src="/src/assets/hero-delivery.jpg"
+                alt="Fast delivery service - courier delivering packages across Kenya"
                 className="w-full h-[600px] object-cover"
-              >
-                <source src="/src/assets/hero-delivery-video.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
+              />
               <div className="absolute inset-0 bg-gradient-hero opacity-20"></div>
             </div>
             
