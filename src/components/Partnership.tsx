@@ -1,7 +1,24 @@
 import { Button } from "@/components/ui/button";
 import { Truck, Users, TrendingUp, Shield, Phone, Mail } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 const Partnership = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const handlePartnerSignup = () => {
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      navigate('/auth');
+    }
+  };
+
+  const handleLoginAgain = () => {
+    navigate('/auth');
+  };
+
   const benefits = [
     {
       icon: TrendingUp,
@@ -90,8 +107,12 @@ const Partnership = () => {
                   </li>
                 ))}
               </ul>
-              <Button variant="outline" className="w-full">
-                Learn More
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={user ? handlePartnerSignup : handleLoginAgain}
+              >
+                {user ? 'Go to Dashboard' : 'Login to Get Started'}
               </Button>
             </div>
           ))}
@@ -109,13 +130,23 @@ const Partnership = () => {
               Get started today and become part of Kenya's delivery revolution.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button variant="secondary" size="lg" className="shadow-secondary">
-                <Phone className="mr-2 h-5 w-5" />
-                Call Us Now
+              <Button 
+                variant="secondary" 
+                size="lg" 
+                className="shadow-secondary"
+                onClick={user ? handlePartnerSignup : handleLoginAgain}
+              >
+                <Truck className="mr-2 h-5 w-5" />
+                {user ? 'Go to Dashboard' : 'Login to Join as Partner'}
               </Button>
-              <Button variant="outline" size="lg" className="bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary">
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary"
+                onClick={user ? handlePartnerSignup : handleLoginAgain}
+              >
                 <Mail className="mr-2 h-5 w-5" />
-                Email Partnership Team
+                {user ? 'Manage Account' : 'Login to Get Started'}
               </Button>
             </div>
           </div>

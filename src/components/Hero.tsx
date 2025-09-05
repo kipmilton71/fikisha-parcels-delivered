@@ -1,7 +1,32 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Package, Truck, Clock, Shield } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 const Hero = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const handleSendPackage = () => {
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      navigate('/auth');
+    }
+  };
+
+  const handleJoinAsDriver = () => {
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      navigate('/auth');
+    }
+  };
+
+  const handleLoginAgain = () => {
+    navigate('/auth');
+  };
+
   return (
     <section className="relative overflow-hidden bg-gradient-subtle py-20 lg:py-32">
       <div className="container mx-auto px-4">
@@ -38,14 +63,47 @@ const Hero = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button variant="hero" size="xl" className="shadow-elegant">
-                Send a Package
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button variant="partner" size="xl">
-                <Truck className="mr-2 h-5 w-5" />
-                Join as Driver
-              </Button>
+              {user ? (
+                <>
+                  <Button 
+                    variant="hero" 
+                    size="xl" 
+                    className="shadow-elegant"
+                    onClick={handleSendPackage}
+                  >
+                    Go to Dashboard
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                  <Button 
+                    variant="partner" 
+                    size="xl"
+                    onClick={handleJoinAsDriver}
+                  >
+                    <Truck className="mr-2 h-5 w-5" />
+                    Manage Deliveries
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button 
+                    variant="hero" 
+                    size="xl" 
+                    className="shadow-elegant"
+                    onClick={handleLoginAgain}
+                  >
+                    Login to Continue
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                  <Button 
+                    variant="partner" 
+                    size="xl"
+                    onClick={handleLoginAgain}
+                  >
+                    <Truck className="mr-2 h-5 w-5" />
+                    Get Started
+                  </Button>
+                </>
+              )}
             </div>
 
             {/* Stats */}

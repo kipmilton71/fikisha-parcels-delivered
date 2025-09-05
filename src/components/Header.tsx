@@ -1,15 +1,20 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Package, Truck, Users } from "lucide-react";
+import { Menu, X, Package, Truck, Users, User, LogOut } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, profile, signOut } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <header className="bg-background border-b border-border sticky top-0 z-50 backdrop-blur-sm bg-background/95">
@@ -43,54 +48,91 @@ const Header = () => {
 
           {/* Desktop CTA Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" size="sm">
-              Sign In
-            </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="hero" size="sm">
-                  Get Started
+            {user ? (
+              <>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      {profile?.full_name || 'Account'}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56">
+                    <DropdownMenuItem onClick={() => navigate('/dashboard')}>
+                      <User className="h-4 w-4 mr-2" />
+                      Dashboard
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => signOut()}>
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Sign Out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <Button 
+                  variant="hero" 
+                  size="sm"
+                  onClick={() => navigate('/dashboard')}
+                >
+                  Go to Dashboard
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-80 p-4">
-                <DropdownMenuItem 
-                  className="flex flex-col items-start p-4 cursor-pointer hover:bg-accent"
-                  onSelect={() => {}}
+              </>
+            ) : (
+              <>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => navigate('/auth')}
                 >
-                  <div className="font-semibold text-foreground">Become a Delivery Guy</div>
-                  <div className="text-sm text-muted-foreground mt-1">
-                    Deliver parcels within your area and get paid weekly, good rates.
-                  </div>
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  className="flex flex-col items-start p-4 cursor-pointer hover:bg-accent"
-                  onSelect={() => {}}
-                >
-                  <div className="font-semibold text-foreground">Add Fikisha to your online store</div>
-                  <div className="text-sm text-muted-foreground mt-1">
-                    Reach more customers and increase earnings
-                  </div>
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  className="flex flex-col items-start p-4 cursor-pointer hover:bg-accent"
-                  onSelect={() => {}}
-                >
-                  <div className="font-semibold text-foreground">Sign up as a fleet owner</div>
-                  <div className="text-sm text-muted-foreground mt-1">
-                    Own a fleet? Partner with us and boost your income
-                  </div>
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  className="flex flex-col items-start p-4 cursor-pointer hover:bg-accent"
-                  onSelect={() => {}}
-                >
-                  <div className="font-semibold text-foreground">Fikisha for Bulk sellers</div>
-                  <div className="text-sm text-muted-foreground mt-1">
-                    Scale-up your online business with Fikisha Deliveries
-                  </div>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  Sign In
+                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="hero" size="sm">
+                      Get Started
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-80 p-4">
+                    <DropdownMenuItem 
+                      className="flex flex-col items-start p-4 cursor-pointer hover:bg-accent"
+                      onSelect={() => navigate('/auth')}
+                    >
+                      <div className="font-semibold text-foreground">Become a Delivery Guy</div>
+                      <div className="text-sm text-muted-foreground mt-1">
+                        Deliver parcels within your area and get paid weekly, good rates.
+                      </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      className="flex flex-col items-start p-4 cursor-pointer hover:bg-accent"
+                      onSelect={() => navigate('/auth')}
+                    >
+                      <div className="font-semibold text-foreground">Send Packages</div>
+                      <div className="text-sm text-muted-foreground mt-1">
+                        Create an account to send and track your packages
+                      </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      className="flex flex-col items-start p-4 cursor-pointer hover:bg-accent"
+                      onSelect={() => navigate('/auth')}
+                    >
+                      <div className="font-semibold text-foreground">Add Fikisha to your online store</div>
+                      <div className="text-sm text-muted-foreground mt-1">
+                        Reach more customers and increase earnings
+                      </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      className="flex flex-col items-start p-4 cursor-pointer hover:bg-accent"
+                      onSelect={() => navigate('/auth')}
+                    >
+                      <div className="font-semibold text-foreground">Fikisha for Bulk sellers</div>
+                      <div className="text-sm text-muted-foreground mt-1">
+                        Scale-up your online business with Fikisha Deliveries
+                      </div>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -119,54 +161,42 @@ const Header = () => {
                 Contact
               </a>
               <div className="flex flex-col space-y-2 pt-4">
-                <Button variant="ghost" size="sm">
-                  Sign In
-                </Button>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="hero" size="sm" className="w-full">
+                {user ? (
+                  <>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => navigate('/dashboard')}
+                    >
+                      Dashboard
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => signOut()}
+                    >
+                      Sign Out
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => navigate('/auth')}
+                    >
+                      Sign In
+                    </Button>
+                    <Button 
+                      variant="hero" 
+                      size="sm" 
+                      className="w-full"
+                      onClick={() => navigate('/auth')}
+                    >
                       Get Started
                     </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-80 p-4">
-                    <DropdownMenuItem 
-                      className="flex flex-col items-start p-4 cursor-pointer hover:bg-accent"
-                      onSelect={() => {}}
-                    >
-                      <div className="font-semibold text-foreground">Become a Delivery Guy</div>
-                      <div className="text-sm text-muted-foreground mt-1">
-                        Deliver parcels within your area and get paid weekly, good rates.
-                      </div>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      className="flex flex-col items-start p-4 cursor-pointer hover:bg-accent"
-                      onSelect={() => {}}
-                    >
-                      <div className="font-semibold text-foreground">Add Fikisha to your online store</div>
-                      <div className="text-sm text-muted-foreground mt-1">
-                        Reach more customers and increase earnings
-                      </div>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      className="flex flex-col items-start p-4 cursor-pointer hover:bg-accent"
-                      onSelect={() => {}}
-                    >
-                      <div className="font-semibold text-foreground">Sign up as a fleet owner</div>
-                      <div className="text-sm text-muted-foreground mt-1">
-                        Own a fleet? Partner with us and boost your income
-                      </div>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      className="flex flex-col items-start p-4 cursor-pointer hover:bg-accent"
-                      onSelect={() => {}}
-                    >
-                      <div className="font-semibold text-foreground">Fikisha for Bulk sellers</div>
-                      <div className="text-sm text-muted-foreground mt-1">
-                        Scale-up your online business with Fikisha Deliveries
-                      </div>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                  </>
+                )}
               </div>
             </nav>
           </div>

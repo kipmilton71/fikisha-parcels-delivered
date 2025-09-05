@@ -1,7 +1,32 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Package, MapPin, Truck, CheckCircle, Smartphone, CreditCard } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 const HowItWorks = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const handleSendPackage = () => {
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      navigate('/auth');
+    }
+  };
+
+  const handleJoinAsDriver = () => {
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      navigate('/auth');
+    }
+  };
+
+  const handleLoginAgain = () => {
+    navigate('/auth');
+  };
+
   const customerSteps = [
     {
       icon: Smartphone,
@@ -96,8 +121,13 @@ const HowItWorks = () => {
             </div>
 
             <div className="mt-8">
-              <Button variant="hero" size="lg" className="w-full sm:w-auto">
-                Send Package Now
+              <Button 
+                variant="hero" 
+                size="lg" 
+                className="w-full sm:w-auto"
+                onClick={user ? handleSendPackage : handleLoginAgain}
+              >
+                {user ? 'Go to Dashboard' : 'Login to Send Packages'}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </div>
@@ -136,8 +166,13 @@ const HowItWorks = () => {
             </div>
 
             <div className="mt-8">
-              <Button variant="cta" size="lg" className="w-full sm:w-auto">
-                Join as Driver
+              <Button 
+                variant="cta" 
+                size="lg" 
+                className="w-full sm:w-auto"
+                onClick={user ? handleJoinAsDriver : handleLoginAgain}
+              >
+                {user ? 'Manage Deliveries' : 'Login to Join as Driver'}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </div>
