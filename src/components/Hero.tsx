@@ -11,24 +11,24 @@ const Hero = () => {
     if (user) {
       navigate('/dashboard');
     } else {
-      navigate('/auth');
+      navigate('/customer-auth');
     }
   };
 
   const handleJoinAsDriver = () => {
     if (user) {
-      navigate('/dashboard');
+      navigate('/driver-application');
     } else {
-      navigate('/auth');
+      navigate('/driver-auth');
     }
   };
 
   const handleLoginAgain = () => {
-    navigate('/auth');
+    navigate('/customer-auth');
   };
 
   return (
-    <section className="relative overflow-hidden bg-gradient-subtle py-20 lg:py-32">
+    <section className="relative overflow-hidden bg-gradient-subtle py-4 lg:py-2">
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
@@ -91,16 +91,16 @@ const Hero = () => {
                     className="shadow-elegant"
                     onClick={handleLoginAgain}
                   >
-                    Login to Continue
+                    Send a Package
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                   <Button 
                     variant="partner" 
                     size="xl"
-                    onClick={handleLoginAgain}
+                    onClick={handleJoinAsDriver}
                   >
                     <Truck className="mr-2 h-5 w-5" />
-                    Get Started
+                    Join as a Driver
                   </Button>
                 </>
               )}

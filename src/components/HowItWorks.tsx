@@ -11,7 +11,7 @@ const HowItWorks = () => {
     if (user) {
       navigate('/dashboard');
     } else {
-      navigate('/auth');
+      navigate('/customer-auth');
     }
   };
 
@@ -19,12 +19,12 @@ const HowItWorks = () => {
     if (user) {
       navigate('/dashboard');
     } else {
-      navigate('/auth');
+      navigate('/driver-auth');
     }
   };
 
   const handleLoginAgain = () => {
-    navigate('/auth');
+    navigate('/customer-auth');
   };
 
   const customerSteps = [

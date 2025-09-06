@@ -27,6 +27,8 @@ CREATE TABLE IF NOT EXISTS profiles (
     role user_role NOT NULL DEFAULT 'customer',
     avatar_url TEXT,
     is_active BOOLEAN DEFAULT true,
+    status TEXT DEFAULT 'active' CHECK (status IN ('active', 'pending', 'pending_approval', 'suspended')),
+    account_setup_completed BOOLEAN DEFAULT false,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -41,6 +43,22 @@ CREATE TABLE IF NOT EXISTS driver_profiles (
     is_available BOOLEAN DEFAULT false,
     current_latitude DECIMAL(10, 8),
     current_longitude DECIMAL(11, 8),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create driver_applications table (only if it doesn't exist)
+CREATE TABLE IF NOT EXISTS driver_applications (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    user_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
+    id_number TEXT NOT NULL,
+    vehicle_type TEXT NOT NULL,
+    vehicle_registration TEXT NOT NULL,
+    license_number TEXT NOT NULL,
+    experience TEXT NOT NULL,
+    availability TEXT NOT NULL,
+    service_areas TEXT NOT NULL,
+    status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

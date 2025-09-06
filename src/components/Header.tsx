@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import NotificationCenter from "./NotificationCenter";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -50,6 +51,7 @@ const Header = () => {
           <div className="hidden md:flex items-center space-x-4">
             {user ? (
               <>
+                <NotificationCenter />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="sm" className="flex items-center gap-2">
@@ -82,7 +84,7 @@ const Header = () => {
                 <Button 
                   variant="ghost" 
                   size="sm"
-                  onClick={() => navigate('/auth')}
+                  onClick={() => navigate('/customer-auth')}
                 >
                   Sign In
                 </Button>
@@ -95,7 +97,7 @@ const Header = () => {
                   <DropdownMenuContent className="w-80 p-4">
                     <DropdownMenuItem 
                       className="flex flex-col items-start p-4 cursor-pointer hover:bg-accent"
-                      onSelect={() => navigate('/auth')}
+                      onSelect={() => navigate('/driver-auth')}
                     >
                       <div className="font-semibold text-foreground">Become a Delivery Guy</div>
                       <div className="text-sm text-muted-foreground mt-1">
@@ -104,7 +106,7 @@ const Header = () => {
                     </DropdownMenuItem>
                     <DropdownMenuItem 
                       className="flex flex-col items-start p-4 cursor-pointer hover:bg-accent"
-                      onSelect={() => navigate('/auth')}
+                      onSelect={() => navigate('/customer-auth')}
                     >
                       <div className="font-semibold text-foreground">Send Packages</div>
                       <div className="text-sm text-muted-foreground mt-1">
@@ -113,7 +115,7 @@ const Header = () => {
                     </DropdownMenuItem>
                     <DropdownMenuItem 
                       className="flex flex-col items-start p-4 cursor-pointer hover:bg-accent"
-                      onSelect={() => navigate('/auth')}
+                      onSelect={() => navigate('/customer-auth')}
                     >
                       <div className="font-semibold text-foreground">Add Fikisha to your online store</div>
                       <div className="text-sm text-muted-foreground mt-1">
@@ -122,7 +124,7 @@ const Header = () => {
                     </DropdownMenuItem>
                     <DropdownMenuItem 
                       className="flex flex-col items-start p-4 cursor-pointer hover:bg-accent"
-                      onSelect={() => navigate('/auth')}
+                      onSelect={() => navigate('/customer-auth')}
                     >
                       <div className="font-semibold text-foreground">Fikisha for Bulk sellers</div>
                       <div className="text-sm text-muted-foreground mt-1">
@@ -183,7 +185,7 @@ const Header = () => {
                     <Button 
                       variant="ghost" 
                       size="sm"
-                      onClick={() => navigate('/auth')}
+                      onClick={() => navigate('/customer-auth')}
                     >
                       Sign In
                     </Button>
@@ -191,7 +193,7 @@ const Header = () => {
                       variant="hero" 
                       size="sm" 
                       className="w-full"
-                      onClick={() => navigate('/auth')}
+                      onClick={() => navigate('/customer-auth')}
                     >
                       Get Started
                     </Button>

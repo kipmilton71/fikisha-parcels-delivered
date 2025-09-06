@@ -11,12 +11,12 @@ const Partnership = () => {
     if (user) {
       navigate('/dashboard');
     } else {
-      navigate('/auth');
+      navigate('/driver-auth');
     }
   };
 
   const handleLoginAgain = () => {
-    navigate('/auth');
+    navigate('/driver-auth');
   };
 
   const benefits = [

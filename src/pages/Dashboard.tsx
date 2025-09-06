@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import Layout from '@/components/Layout';
 import CustomerDashboard from '@/components/CustomerDashboard';
 import DriverDashboard from '@/components/DriverDashboard';
+import AdminDashboard from '@/components/AdminDashboard';
 
 const Dashboard = () => {
   const { user, profile, loading } = useAuth();
@@ -25,7 +26,13 @@ const Dashboard = () => {
 
   return (
     <Layout>
-      {userRole === 'driver' ? <DriverDashboard /> : <CustomerDashboard />}
+      {userRole === 'admin' ? (
+        <AdminDashboard />
+      ) : userRole === 'driver' ? (
+        <DriverDashboard />
+      ) : (
+        <CustomerDashboard />
+      )}
     </Layout>
   );
 };

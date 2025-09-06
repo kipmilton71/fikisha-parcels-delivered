@@ -7,7 +7,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
-import { Truck, User } from 'lucide-react';
+import { Truck, User, Shield } from 'lucide-react';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 const Auth = () => {
   const { user, signIn, signUp, loading } = useAuth();
@@ -50,19 +52,21 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 to-accent/5 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="flex items-center justify-center mb-4">
-            <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center">
-              <span className="text-2xl font-bold text-primary-foreground">F</span>
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-1 flex items-center justify-center bg-gradient-to-br from-primary/5 to-accent/5 p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <div className="flex items-center justify-center mb-4">
+              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center">
+                <span className="text-2xl font-bold text-primary-foreground">F</span>
+              </div>
             </div>
-          </div>
-          <CardTitle className="text-2xl font-bold text-primary">Fikisha</CardTitle>
-          <CardDescription>
-            Your reliable delivery partner
-          </CardDescription>
-        </CardHeader>
+            <CardTitle className="text-2xl font-bold text-primary">Fikisha</CardTitle>
+            <CardDescription>
+              Your reliable delivery partner
+            </CardDescription>
+          </CardHeader>
         <CardContent>
           <Tabs defaultValue="signin" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
@@ -179,6 +183,7 @@ const Auth = () => {
                         </div>
                       </div>
                     </div>
+                    
                   </div>
                 </div>
                 <Button type="submit" className="w-full" disabled={isLoading}>
@@ -188,7 +193,9 @@ const Auth = () => {
             </TabsContent>
           </Tabs>
         </CardContent>
-      </Card>
+        </Card>
+      </main>
+      <Footer />
     </div>
   );
 };
