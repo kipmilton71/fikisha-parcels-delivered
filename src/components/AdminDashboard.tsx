@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { BarChart3, Users, Package, DollarSign, TrendingUp, Eye } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import DriverApplicationsTable from './DriverApplicationsTable';
 
 interface DashboardStats {
   totalOrders: number;
@@ -217,6 +218,19 @@ const AdminDashboard: React.FC = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Driver Applications Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Driver Applications</CardTitle>
+          <CardDescription>
+            Review and approve driver applications
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <DriverApplicationsTable />
+        </CardContent>
+      </Card>
 
       {/* Orders Table */}
       <Card>
