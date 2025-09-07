@@ -89,7 +89,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           emailRedirectTo: redirectUrl,
           data: {
             full_name: fullName,
-            role: role
+            role: role,
+            phone_number: phoneNumber
           }
         }
       });
@@ -104,41 +105,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       if (data.user) {
-        // Create profile
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            id: data.user.id,
-            full_name: fullName,
-            role: role,
-            phone_number: phoneNumber
-          });
+        // Let the database trigger handle profile creation
+        // But we need to update the phone number if provided
+        if (phoneNumber) {
+          // Wait a moment for the trigger to create the profile
+          setTimeout(async () => {
+            const { error: updateError } = await supabase
+              .from('profiles')
+              .update({ phone_number: phoneNumber })
+              .eq('id', data.user.id);
 
-        if (profileError) {
-          console.error('Error creating profile:', profileError);
-          toast({
-            title: "Profile creation failed",
-            description: "There was an issue creating your profile. Please try again.",
-            variant: "destructive"
-          });
+            if (updateError) {
+              console.error('Error updating phone number:', updateError);
+            }
+          }, 1000);
         }
 
         // Create driver profile if role is driver
         if (role === 'driver') {
-          const { error: driverError } = await supabase
-            .from('driver_profiles')
-            .insert({
-              id: data.user.id
-            });
+          // Wait for the profile to be created by trigger first
+          setTimeout(async () => {
+            const { error: driverError } = await supabase
+              .from('driver_profiles')
+              .insert({
+                id: data.user.id
+              });
 
-          if (driverError) {
-            console.error('Error creating driver profile:', driverError);
-            toast({
-              title: "Driver profile creation failed",
-              description: "There was an issue creating your driver profile. Please contact support.",
-              variant: "destructive"
-            });
-          }
+            if (driverError) {
+              console.error('Error creating driver profile:', driverError);
+              toast({
+                title: "Driver profile creation failed",
+                description: "There was an issue creating your driver profile. Please contact support.",
+                variant: "destructive"
+              });
+            }
+          }, 1500);
         }
 
         toast({
