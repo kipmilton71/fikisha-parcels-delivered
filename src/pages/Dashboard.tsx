@@ -5,6 +5,7 @@ import Layout from '@/components/Layout';
 import CustomerDashboard from '@/components/CustomerDashboard';
 import DriverDashboard from '@/components/DriverDashboard';
 import AdminDashboard from '@/components/AdminDashboard';
+import PendingApproval from '@/components/PendingApproval';
 
 const Dashboard = () => {
   const { user, profile, loading } = useAuth();
@@ -21,8 +22,16 @@ const Dashboard = () => {
     return <Navigate to="/auth" replace />;
   }
 
-  // Show dashboard based on user's actual role
   const userRole = profile?.role || 'customer';
+
+  // For drivers, check if they're approved
+  if (userRole === 'driver' && !profile?.is_active) {
+    return (
+      <Layout>
+        <PendingApproval />
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
