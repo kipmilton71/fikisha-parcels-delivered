@@ -197,12 +197,26 @@ const DriverApplicationForm: React.FC<DriverApplicationFormProps> = ({ onSuccess
         return;
       }
 
+      // First, check if profile exists, if not create it
+      const { data: existingProfile, error: profileCheckError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (profileCheckError && profileCheckError.code !== 'PGRST116') {
+        console.error('Error checking profile:', profileCheckError);
+        toast.error('Failed to check profile. Please try again.');
+        return;
+      }
+
       const applicationData = {
         id: user.id,
         full_name: `${formData.firstName} ${formData.lastName}`,
         phone_number: formData.phoneNumber,
         role: 'driver' as const,
         is_active: false, // Set to false until approved
+        status: 'pending_approval' as const,
       };
 
       const { error } = await supabase

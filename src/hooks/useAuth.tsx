@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/integrations/supabase/real-client';
 import { useToast } from '@/hooks/use-toast';
 
 interface Profile {
@@ -116,6 +116,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         if (profileError) {
           console.error('Error creating profile:', profileError);
+          toast({
+            title: "Profile creation failed",
+            description: "There was an issue creating your profile. Please try again.",
+            variant: "destructive"
+          });
         }
 
         // Create driver profile if role is driver
@@ -128,6 +133,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
           if (driverError) {
             console.error('Error creating driver profile:', driverError);
+            toast({
+              title: "Driver profile creation failed",
+              description: "There was an issue creating your driver profile. Please contact support.",
+              variant: "destructive"
+            });
           }
         }
 
