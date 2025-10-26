@@ -151,7 +151,7 @@ const Hero = () => {
           <div className="relative lg:col-span-2">
             <div className="relative rounded-2xl overflow-hidden shadow-elegant">
               <img
-                src="/src/assets/hero-delivery.jpg"
+                src="https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=800&h=600&fit=crop"
                 alt="Fast delivery service - courier delivering packages across Kenya"
                 className="w-full h-[600px] object-cover"
               />
