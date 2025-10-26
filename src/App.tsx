@@ -11,6 +11,7 @@ import CustomerAuth from "./pages/CustomerAuth";
 import DriverAuth from "./pages/DriverAuth";
 import DriverApplication from "./pages/DriverApplication";
 import Dashboard from "./pages/Dashboard";
+import TrackPackage from "./pages/TrackPackage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/driver-auth" element={<DriverAuth />} />
             <Route path="/driver-application" element={<DriverApplication />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/track-package" element={<TrackPackage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

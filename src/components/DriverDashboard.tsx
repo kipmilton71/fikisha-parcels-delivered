@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { 
   MapPin, 
   Package, 
@@ -12,67 +14,26 @@ import {
   Clock, 
   DollarSign,
   CheckCircle,
-  Phone
+  Phone,
+  MessageCircle
 } from 'lucide-react';
 import OrderDetailsDialog from '@/components/OrderDetailsDialog';
 import DeliveryConfirmationDialog from '@/components/DeliveryConfirmationDialog';
+import { useAuth } from '@/hooks/useAuth';
+import { DeliveryTasksAPI } from '@/api/deliveryTasks';
 
 const DriverDashboard = () => {
+  const { user } = useAuth();
   const [isAvailable, setIsAvailable] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [showOrderDetails, setShowOrderDetails] = useState(false);
   const [showDeliveryConfirmation, setShowDeliveryConfirmation] = useState(false);
-
-  // Mock data - will be replaced with real data
-  const availableOrders = [
-    {
-      id: '1',
-      tracking_code: 'FKS12345678',
-      receiver_name: 'John Doe',
-      receiver_phone: '+254712345678',
-      pickup_address: 'Downtown Mall, 2nd Floor',
-      pickup_latitude: -1.2921,
-      pickup_longitude: 36.8219,
-      delivery_address: 'Westlands Office Tower, Suite 405',
-      delivery_latitude: -1.2634,
-      delivery_longitude: 36.8050,
-      package_description: 'Documents package',
-      delivery_amount: 250,
-      distance: '2.5 km',
-      created_at: '2024-01-15T10:30:00Z'
-    },
-    {
-      id: '2',
-      tracking_code: 'FKS87654321',
-      receiver_name: 'Jane Smith',
-      receiver_phone: '+254798765432',
-      pickup_address: 'CBD Plaza, Ground Floor',
-      pickup_latitude: -1.2847,
-      pickup_longitude: 36.8173,
-      delivery_address: 'Karen Shopping Center',
-      delivery_latitude: -1.3197,
-      delivery_longitude: 36.7025,
-      package_description: 'Electronics',
-      delivery_amount: 350,
-      distance: '4.2 km',
-      created_at: '2024-01-14T14:20:00Z'
-    }
-  ];
-
-  const activeDeliveries = [
-    {
-      id: '3',
-      tracking_code: 'FKS11111111',
-      receiver_name: 'Mike Johnson',
-      receiver_phone: '+254700111222',
-      pickup_address: 'Town Center Mall',
-      delivery_address: 'Kilimani Heights',
-      package_description: 'Fashion items',
-      delivery_amount: 400,
-      status: 'picked_up',
-      confirmation_code: 'ABC123'
-    }
-  ];
+  const [availableOrders, setAvailableOrders] = useState<any[]>([]);
+  const [activeDeliveries, setActiveDeliveries] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [showTrackingCodeInput, setShowTrackingCodeInput] = useState(false);
+  const [trackingCodeInput, setTrackingCodeInput] = useState('');
+  const [completingOrderId, setCompletingOrderId] = useState<string | null>(null);
 
   const stats = {
     todayEarnings: 1250,
@@ -81,9 +42,59 @@ const DriverDashboard = () => {
     totalDeliveries: 127
   };
 
-  const handleAcceptOrder = (order: any) => {
-    // TODO: Implement order acceptance logic
-    console.log('Accepting order:', order.id);
+  // Fetch data on component mount and when availability changes
+  useEffect(() => {
+    if (user) {
+      fetchAvailableOrders();
+      fetchActiveDeliveries();
+    }
+  }, [user, isAvailable]);
+
+  const fetchAvailableOrders = async () => {
+    if (!isAvailable) return;
+    
+    setLoading(true);
+    try {
+      const result = await DeliveryTasksAPI.getAvailableTasks();
+      if (result.success) {
+        setAvailableOrders(result.data || []);
+      }
+    } catch (error) {
+      console.error('Error fetching available orders:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchActiveDeliveries = async () => {
+    if (!user) return;
+    
+    try {
+      const result = await DeliveryTasksAPI.getDriverTasks(user.id);
+      if (result.success) {
+        setActiveDeliveries(result.data || []);
+      }
+    } catch (error) {
+      console.error('Error fetching active deliveries:', error);
+    }
+  };
+
+  const handleAcceptOrder = async (order: any) => {
+    if (!user) return;
+    
+    try {
+      const result = await DeliveryTasksAPI.acceptTask(order.id, user.id);
+      if (result.success) {
+        // Refresh the lists
+        fetchAvailableOrders();
+        fetchActiveDeliveries();
+        setShowOrderDetails(false);
+      } else {
+        console.error('Failed to accept order:', result.error);
+      }
+    } catch (error) {
+      console.error('Error accepting order:', error);
+    }
   };
 
   const handleViewOrder = (order: any) => {
@@ -93,7 +104,37 @@ const DriverDashboard = () => {
 
   const handleCompleteDelivery = (order: any) => {
     setSelectedOrder(order);
-    setShowDeliveryConfirmation(true);
+    setCompletingOrderId(order.id);
+    setShowTrackingCodeInput(true);
+  };
+
+  const handleCompleteDeliveryWithCode = async () => {
+    if (!completingOrderId || !trackingCodeInput.trim()) {
+      console.error('Missing order ID or tracking code');
+      return;
+    }
+
+    try {
+      const result = await DeliveryTasksAPI.completeDeliveryWithTrackingCode(
+        completingOrderId, 
+        trackingCodeInput.trim()
+      );
+
+      if (result.success) {
+        // Refresh the lists
+        fetchAvailableOrders();
+        fetchActiveDeliveries();
+        setShowTrackingCodeInput(false);
+        setTrackingCodeInput('');
+        setCompletingOrderId(null);
+        setSelectedOrder(null);
+      } else {
+        console.error('Failed to complete delivery:', result.error);
+        // You might want to show an error message to the user
+      }
+    } catch (error) {
+      console.error('Error completing delivery:', error);
+    }
   };
 
   return (
@@ -208,6 +249,13 @@ const DriverDashboard = () => {
                             <div>
                               <p className="text-sm font-medium">Pickup</p>
                               <p className="text-sm text-muted-foreground">{order.pickup_address}</p>
+                              {order.integration_data?.vendor_county && (
+                                <p className="text-xs text-muted-foreground">
+                                  {order.integration_data.vendor_county}
+                                  {order.integration_data.vendor_constituency && `, ${order.integration_data.vendor_constituency}`}
+                                  {order.integration_data.vendor_ward && `, ${order.integration_data.vendor_ward}`}
+                                </p>
+                              )}
                             </div>
                           </div>
                           
@@ -217,10 +265,48 @@ const DriverDashboard = () => {
                               <p className="text-sm font-medium">Drop-off</p>
                               <p className="text-sm text-muted-foreground">{order.delivery_address}</p>
                               <p className="text-sm text-muted-foreground">To: {order.receiver_name}</p>
+                              {order.integration_data?.customer_county && (
+                                <p className="text-xs text-muted-foreground">
+                                  {order.integration_data.customer_county}
+                                  {order.integration_data.customer_constituency && `, ${order.integration_data.customer_constituency}`}
+                                  {order.integration_data.customer_ward && `, ${order.integration_data.customer_ward}`}
+                                </p>
+                              )}
                             </div>
                           </div>
                         </div>
                         
+                        {/* WhatsApp Contact Info */}
+                        {(order.integration_data?.vendor_whatsapp || order.integration_data?.customer_whatsapp) && (
+                          <div className="bg-blue-50 p-3 rounded-lg space-y-2">
+                            <p className="text-sm font-medium text-blue-900">Contact Information:</p>
+                            <div className="flex flex-wrap gap-2">
+                              {order.integration_data?.vendor_whatsapp && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="text-green-600 border-green-200 hover:bg-green-50"
+                                  onClick={() => window.open(`https://wa.me/${order.integration_data.vendor_whatsapp.replace(/[^0-9]/g, '')}`, '_blank')}
+                                >
+                                  <MessageCircle className="h-4 w-4 mr-2" />
+                                  Contact Vendor
+                                </Button>
+                              )}
+                              {order.integration_data?.customer_whatsapp && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="text-green-600 border-green-200 hover:bg-green-50"
+                                  onClick={() => window.open(`https://wa.me/${order.integration_data.customer_whatsapp.replace(/[^0-9]/g, '')}`, '_blank')}
+                                >
+                                  <MessageCircle className="h-4 w-4 mr-2" />
+                                  Contact Customer
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        )}
+
                         <div className="flex gap-2 pt-2">
                           <Button 
                             onClick={() => handleViewOrder(order)}
@@ -294,6 +380,37 @@ const DriverDashboard = () => {
                         </div>
                       </div>
                       
+                      {/* WhatsApp Contact Info for Active Deliveries */}
+                      {(order.integration_data?.vendor_whatsapp || order.integration_data?.customer_whatsapp) && (
+                        <div className="bg-blue-50 p-3 rounded-lg space-y-2">
+                          <p className="text-sm font-medium text-blue-900">Contact Information:</p>
+                          <div className="flex flex-wrap gap-2">
+                            {order.integration_data?.vendor_whatsapp && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="text-green-600 border-green-200 hover:bg-green-50"
+                                onClick={() => window.open(`https://wa.me/${order.integration_data.vendor_whatsapp.replace(/[^0-9]/g, '')}`, '_blank')}
+                              >
+                                <MessageCircle className="h-4 w-4 mr-2" />
+                                Contact Vendor
+                              </Button>
+                            )}
+                            {order.integration_data?.customer_whatsapp && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="text-green-600 border-green-200 hover:bg-green-50"
+                                onClick={() => window.open(`https://wa.me/${order.integration_data.customer_whatsapp.replace(/[^0-9]/g, '')}`, '_blank')}
+                              >
+                                <MessageCircle className="h-4 w-4 mr-2" />
+                                Contact Customer
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
                       <div className="flex gap-2 pt-2">
                         <Button 
                           variant="outline" 
@@ -340,6 +457,58 @@ const DriverDashboard = () => {
           onOpenChange={setShowDeliveryConfirmation}
           order={selectedOrder}
         />
+
+        {/* Tracking Code Input Modal */}
+        {showTrackingCodeInput && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <Card className="w-full max-w-md">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Package className="w-5 h-5" />
+                  Complete Delivery
+                </CardTitle>
+                <CardDescription>
+                  Ask the customer for their tracking code to complete delivery
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="tracking-code">Customer Tracking Code</Label>
+                  <Input
+                    id="tracking-code"
+                    value={trackingCodeInput}
+                    onChange={(e) => setTrackingCodeInput(e.target.value)}
+                    placeholder="Enter tracking code from customer"
+                    className="font-mono text-lg"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    The customer should provide this code to verify delivery
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setShowTrackingCodeInput(false);
+                      setTrackingCodeInput('');
+                      setCompletingOrderId(null);
+                    }}
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleCompleteDeliveryWithCode}
+                    disabled={!trackingCodeInput.trim()}
+                    className="flex-1"
+                  >
+                    Complete Delivery
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   );

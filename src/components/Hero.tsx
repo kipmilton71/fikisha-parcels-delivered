@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Package, Truck, Clock, Shield } from "lucide-react";
+import { ArrowRight, Package, Truck, Clock, Shield, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -27,12 +27,16 @@ const Hero = () => {
     navigate('/customer-auth');
   };
 
+  const handleTrackPackage = () => {
+    navigate('/track-package');
+  };
+
   return (
     <section className="relative overflow-hidden bg-gradient-subtle py-4 lg:py-2">
       <div className="container mx-auto px-4">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-5 gap-12 items-center">
           {/* Left Content */}
-          <div className="space-y-8">
+          <div className="space-y-8 lg:col-span-3">
             <div className="space-y-6">
               <h1 className="text-4xl lg:text-6xl font-bold text-foreground leading-tight">
                 Fast, Reliable
@@ -62,45 +66,65 @@ const Hero = () => {
             </div>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3">
               {user ? (
                 <>
                   <Button 
                     variant="hero" 
-                    size="xl" 
-                    className="shadow-elegant"
+                    size="lg" 
+                    className="shadow-elegant flex-1 sm:flex-none sm:min-w-[180px]"
                     onClick={handleSendPackage}
                   >
                     Go to Dashboard
-                    <ArrowRight className="ml-2 h-5 w-5" />
+                    <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                   <Button 
                     variant="partner" 
-                    size="xl"
+                    size="lg"
+                    className="flex-1 sm:flex-none sm:min-w-[180px]"
                     onClick={handleJoinAsDriver}
                   >
-                    <Truck className="mr-2 h-5 w-5" />
+                    <Truck className="mr-2 h-4 w-4" />
                     Manage Deliveries
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="lg"
+                    className="flex-1 sm:flex-none sm:min-w-[160px]"
+                    onClick={handleTrackPackage}
+                  >
+                    <Search className="mr-2 h-4 w-4" />
+                    Track Package
                   </Button>
                 </>
               ) : (
                 <>
                   <Button 
                     variant="hero" 
-                    size="xl" 
-                    className="shadow-elegant"
+                    size="lg" 
+                    className="shadow-elegant flex-1 sm:flex-none sm:min-w-[180px]"
                     onClick={handleLoginAgain}
                   >
                     Send a Package
-                    <ArrowRight className="ml-2 h-5 w-5" />
+                    <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                   <Button 
                     variant="partner" 
-                    size="xl"
+                    size="lg"
+                    className="flex-1 sm:flex-none sm:min-w-[180px]"
                     onClick={handleJoinAsDriver}
                   >
-                    <Truck className="mr-2 h-5 w-5" />
+                    <Truck className="mr-2 h-4 w-4" />
                     Join as a Driver
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="lg"
+                    className="flex-1 sm:flex-none sm:min-w-[160px]"
+                    onClick={handleTrackPackage}
+                  >
+                    <Search className="mr-2 h-4 w-4" />
+                    Track Package
                   </Button>
                 </>
               )}
@@ -124,7 +148,7 @@ const Hero = () => {
           </div>
 
           {/* Right Video */}
-          <div className="relative">
+          <div className="relative lg:col-span-2">
             <div className="relative rounded-2xl overflow-hidden shadow-elegant">
               <img
                 src="/src/assets/hero-delivery.jpg"
