@@ -20,10 +20,12 @@ import {
 import OrderDetailsDialog from '@/components/OrderDetailsDialog';
 import DeliveryConfirmationDialog from '@/components/DeliveryConfirmationDialog';
 import { useAuth } from '@/hooks/useAuth';
+import { useDriverEarnings } from '@/hooks/useDriverEarnings';
 import { DeliveryTasksAPI } from '@/api/deliveryTasks';
 
 const DriverDashboard = () => {
   const { user } = useAuth();
+  const { stats, loading: statsLoading } = useDriverEarnings(user?.id);
   const [isAvailable, setIsAvailable] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [showOrderDetails, setShowOrderDetails] = useState(false);
@@ -34,13 +36,6 @@ const DriverDashboard = () => {
   const [showTrackingCodeInput, setShowTrackingCodeInput] = useState(false);
   const [trackingCodeInput, setTrackingCodeInput] = useState('');
   const [completingOrderId, setCompletingOrderId] = useState<string | null>(null);
-
-  const stats = {
-    todayEarnings: 1250,
-    todayDeliveries: 5,
-    rating: 4.8,
-    totalDeliveries: 127
-  };
 
   // Fetch data on component mount and when availability changes
   useEffect(() => {
@@ -168,7 +163,7 @@ const DriverDashboard = () => {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Today's Earnings</p>
-                  <p className="text-2xl font-bold">KSh {stats.todayEarnings}</p>
+                  <p className="text-2xl font-bold">KSh {stats.todayEarnings.toFixed(2)}</p>
                 </div>
               </div>
             </CardContent>

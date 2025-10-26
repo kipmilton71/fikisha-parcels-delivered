@@ -8,7 +8,7 @@ import AdminDashboard from '@/components/AdminDashboard';
 import PendingApproval from '@/components/PendingApproval';
 
 const Dashboard = () => {
-  const { user, profile, loading } = useAuth();
+  const { user, profile, loading, hasRole } = useAuth();
 
   if (loading) {
     return (
@@ -22,10 +22,12 @@ const Dashboard = () => {
     return <Navigate to="/auth" replace />;
   }
 
-  const userRole = profile?.role || 'customer';
+  // Use secure role checking
+  const isAdmin = hasRole('admin');
+  const isDriver = hasRole('driver');
 
   // For drivers, check if they're approved
-  if (userRole === 'driver' && !profile?.is_active) {
+  if (isDriver && !profile?.is_active) {
     return (
       <Layout>
         <PendingApproval />
@@ -35,9 +37,9 @@ const Dashboard = () => {
 
   return (
     <Layout>
-      {userRole === 'admin' ? (
+      {isAdmin ? (
         <AdminDashboard />
-      ) : userRole === 'driver' ? (
+      ) : isDriver ? (
         <DriverDashboard />
       ) : (
         <CustomerDashboard />

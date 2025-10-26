@@ -7,20 +7,25 @@ interface Profile {
   id: string;
   full_name: string;
   phone_number?: string;
-  role: 'customer' | 'driver' | 'admin';
   avatar_url?: string;
   is_active: boolean;
+}
+
+interface UserRole {
+  role: 'customer' | 'driver' | 'admin';
 }
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   profile: Profile | null;
+  userRoles: string[];
   loading: boolean;
   signUp: (email: string, password: string, fullName: string, role: 'customer' | 'driver' | 'admin', phoneNumber?: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   updateProfile: (updates: Partial<Profile>) => Promise<{ error: any }>;
+  hasRole: (role: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -37,6 +42,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [userRoles, setUserRoles] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
@@ -48,22 +54,44 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          // Fetch user profile
+          // Fetch user profile and roles
           setTimeout(async () => {
-            const { data, error } = await supabase
+            // Fetch profile
+            const { data: profileData, error: profileError } = await supabase
               .from('profiles')
               .select('*')
               .eq('id', session.user.id)
               .single();
             
-            if (data) {
-              setProfile(data);
-            } else if (error) {
-              console.error('Error fetching profile:', error);
+            if (profileData) {
+              setProfile(profileData);
+              // Temporarily use role from profile until migration is complete
+              // After migration, this will be replaced by user_roles table query
+              const profileRole = (profileData as any).role;
+              if (profileRole) {
+                setUserRoles([profileRole]);
+              }
+            } else if (profileError) {
+              console.error('Error fetching profile:', profileError);
+            }
+
+            // Try to fetch from user_roles table (will work after migration)
+            try {
+              const { data: rolesData } = await supabase
+                .from('user_roles' as any)
+                .select('role')
+                .eq('user_id', session.user.id);
+              
+              if (rolesData && rolesData.length > 0) {
+                setUserRoles(rolesData.map((r: any) => r.role));
+              }
+            } catch (error) {
+              // Table doesn't exist yet, using profile role as fallback
             }
           }, 0);
         } else {
           setProfile(null);
+          setUserRoles([]);
         }
       }
     );
@@ -105,40 +133,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       if (data.user) {
-        // Let the database trigger handle profile creation
-        // But we need to update the phone number if provided
+        // Update phone number if provided
         if (phoneNumber) {
-          // Wait a moment for the trigger to create the profile
           setTimeout(async () => {
-            const { error: updateError } = await supabase
+            await supabase
               .from('profiles')
               .update({ phone_number: phoneNumber })
               .eq('id', data.user.id);
-
-            if (updateError) {
-              console.error('Error updating phone number:', updateError);
-            }
           }, 1000);
         }
 
         // Create driver profile if role is driver
         if (role === 'driver') {
-          // Wait for the profile to be created by trigger first
           setTimeout(async () => {
-            const { error: driverError } = await supabase
+            await supabase
               .from('driver_profiles')
               .insert({
-                id: data.user.id
+                id: data.user.id,
+                is_available: false
               });
-
-            if (driverError) {
-              console.error('Error creating driver profile:', driverError);
-              toast({
-                title: "Driver profile creation failed",
-                description: "There was an issue creating your driver profile. Please contact support.",
-                variant: "destructive"
-              });
-            }
           }, 1500);
         }
 
@@ -231,15 +244,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const hasRole = (role: string) => {
+    return userRoles.includes(role);
+  };
+
   const value = {
     user,
     session,
     profile,
+    userRoles,
     loading,
     signUp,
     signIn,
     signOut,
-    updateProfile
+    updateProfile,
+    hasRole
   };
 
   return (

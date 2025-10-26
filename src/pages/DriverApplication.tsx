@@ -5,7 +5,7 @@ import Layout from '@/components/Layout';
 import DriverApplicationForm from '@/components/DriverApplicationForm';
 
 const DriverApplication = () => {
-  const { user, profile, loading } = useAuth();
+  const { user, profile, loading, hasRole } = useAuth();
 
   if (loading) {
     return (
@@ -20,7 +20,7 @@ const DriverApplication = () => {
   }
 
   // If user already has a driver profile (active or pending), redirect to dashboard
-  if (profile?.role === 'driver') {
+  if (hasRole('driver')) {
     return <Navigate to="/dashboard" replace />;
   }
 

@@ -11,7 +11,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
 const DriverAuth = () => {
-  const { user, profile, signIn, signUp, loading } = useAuth();
+  const { user, profile, signIn, signUp, loading, hasRole } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -35,7 +35,7 @@ const DriverAuth = () => {
 
   if (user) {
     // If user has a driver profile, redirect to dashboard
-    if (profile?.role === 'driver') {
+    if (hasRole('driver')) {
       return <Navigate to="/dashboard" replace />;
     }
     // For new drivers without a profile yet, redirect to application
