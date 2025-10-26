@@ -1,26 +1,38 @@
 import React from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import Layout from '@/components/Layout';
 import DriverApplicationForm from '@/components/DriverApplicationForm';
 
 const DriverApplication = () => {
-  const { user } = useAuth();
-  const navigate = useNavigate();
+  const { user, profile, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   if (!user) {
     return <Navigate to="/driver-auth" replace />;
   }
 
-  const handleSuccess = () => {
-    navigate('/dashboard');
+  // If user already has a driver profile (active or pending), redirect to dashboard
+  if (profile?.role === 'driver') {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  const handleApplicationSuccess = () => {
+    // Redirect to dashboard after successful application
+    window.location.href = '/dashboard';
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 to-accent/5">
-      <div className="container mx-auto py-8">
-        <DriverApplicationForm onSuccess={handleSuccess} />
-      </div>
-    </div>
+    <Layout>
+      <DriverApplicationForm onSuccess={handleApplicationSuccess} />
+    </Layout>
   );
 };
 

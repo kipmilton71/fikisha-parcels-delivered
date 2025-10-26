@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/integrations/supabase/real-client';
 import { Plus, Minus, Upload, User, Building, Truck, FileText, CreditCard, Shield } from 'lucide-react';
 
 interface DriverApplicationFormProps {
